@@ -1,0 +1,43 @@
+apply plugin: 'java'
+
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'GW Example Test',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  testCompile 'junit:junit:4.12'
+}
+
+test {
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+    }
+
+    reports {
+        junitXml.enabled = false
+        html.enabled = true
+    }               
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'dist'
+       }
+    }
+}
